@@ -249,7 +249,11 @@ classdef RegisterStack < handle
                 if ~isempty(obj.transformed)
                     set(obj.transformView.overlay, 'XData', pos(1),...
                         'YData', pos(2), 'Color', 'r');
-                    pos = [ pos(2) pos(1) obj.referenceView.iframe 1];
+                    if size(obj.A_for, 1) > 3
+                        pos = [ pos(2) pos(1) obj.referenceView.iframe  1];
+                    else
+                        pos = [ pos(2) pos(1)  1];
+                    end
                     zstackpos = pos * obj.A_for;
                     
                     obj.sliderStackFrame.Value = round(zstackpos(3));
@@ -394,7 +398,7 @@ classdef RegisterStack < handle
             X_zstack = [ obj.cp_zstack ones(size(obj.cp_zstack,1),1)];
             X_reference = [ obj.cp_reference ones(size(obj.cp_reference,1),1)];
             % solve for transformation matrix
-            if size(obj.reference, 3) == 1
+            if size(obj.reference, 4) == 1
                  X_reference = X_reference(:, [1,2,4]);
             end
             obj.A_for = X_reference \ X_zstack;    % coefs for transforming reference coords into zstack, X_reference * A_for = X_zstack
